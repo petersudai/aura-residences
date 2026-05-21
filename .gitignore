@@ -42,4 +42,24 @@ Thumbs.db
 *.doc
 *.xlsx
 *.xls
-node_modules/
+*.pdf
+*.pptx
+*.ppt
+*.csv
+
+# Specific internal documents
+LEADS*
+*LEADS*
+*leads*
+*pitch*
+*PITCH*
+
+# IDE / editor folders
+.vscode/
+.idea/
+*.code-workspace
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini

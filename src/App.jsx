@@ -61,15 +61,20 @@ const PROPERTIES = [
   },
 ]
 
+const _POOL   = 'https://images.unsplash.com/photo-1774281267183-93e0632b50d1?w=1400&q=85'
+const _LOUNGE = 'https://images.unsplash.com/photo-1776361984994-089a9df800f6?w=1400&q=85'
+const _GYM    = 'https://images.unsplash.com/photo-1630703178161-1e2f9beddbf8?w=1400&q=85'
+const _PARK   = 'https://images.unsplash.com/photo-1607284994847-7a9cfe7f1df2?w=1400&q=85'
+
 const AMENITIES = [
-  { icon: Waves,     title: 'Infinity Edge Pool',  desc: 'Sky-level pool overlooking the Nairobi skyline' },
-  { icon: Building2, title: 'Rooftop Lounge',       desc: 'Exclusive residents-only terrace bar & event space' },
-  { icon: Dumbbell,  title: 'Performance Gym',      desc: 'Technogym-equipped private fitness studio' },
-  { icon: Clock,     title: '24/7 Concierge',       desc: 'White-glove resident services around the clock' },
-  { icon: Car,       title: 'Secure Parking',       desc: 'Biometric basement with dedicated EV charging bays' },
-  { icon: Shield,    title: 'Smart Security',       desc: 'CCTV, facial recognition & panic-response systems' },
-  { icon: Wifi,      title: '1 Gbps Fibre',         desc: 'Dedicated high-speed fibre per unit, no contention' },
-  { icon: Sparkles,  title: 'Wellness Spa',         desc: 'In-house sauna, steam & private treatment rooms' },
+  { icon: Waves,     photo: _POOL,   title: 'Infinity Edge Pool',  desc: 'Sky-level pool overlooking the full Nairobi skyline, open exclusively to residents' },
+  { icon: Building2, photo: _LOUNGE, title: 'Rooftop Lounge',      desc: 'Residents-only terrace bar and private event space, perched above the city' },
+  { icon: Dumbbell,  photo: _GYM,    title: 'Performance Gym',     desc: 'Technogym-equipped fitness studio with personal training available on request' },
+  { icon: Clock,     photo: _LOUNGE, title: '24/7 Concierge',      desc: 'White-glove resident services around the clock — from reservations to deliveries' },
+  { icon: Car,       photo: _PARK,   title: 'Secure Parking',      desc: 'Biometric-access basement with dedicated EV charging bays per residence' },
+  { icon: Shield,    photo: _PARK,   title: 'Smart Security',      desc: 'Full-perimeter CCTV, facial recognition entry and rapid panic-response systems' },
+  { icon: Wifi,      photo: _LOUNGE, title: '1 Gbps Fibre',        desc: 'Dedicated uncontended fibre per unit — the fastest residential speeds in Westlands' },
+  { icon: Sparkles,  photo: _POOL,   title: 'Wellness Spa',        desc: 'In-house sauna, steam room and private treatment suites for exclusive resident use' },
 ]
 
 const GALLERY = [
@@ -646,40 +651,113 @@ function PropertyExplorer() {
 // ─── Amenities Grid ───────────────────────────────────────────────────────────
 
 function AmenitiesGrid() {
-  return (
-    <section id="amenities" className="relative bg-aura-dark py-14 sm:py-24 lg:py-36">
-      <NoiseOverlay />
-      <div className="relative z-[1] max-w-7xl mx-auto px-5 sm:px-6">
+  const [activeIdx, setActiveIdx] = useState(0)
+  const active = AMENITIES[activeIdx]
 
-        <FadeIn className="mb-10 sm:mb-16 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 sm:gap-6">
-          <div>
+  return (
+    <section id="amenities" className="relative bg-aura-dark overflow-hidden">
+      <NoiseOverlay />
+
+      <div className="relative z-[1] grid lg:grid-cols-2">
+
+        {/* ── Left: Photo panel ───────────────────────────────── */}
+        <div className="relative h-72 sm:h-[420px] lg:h-auto lg:min-h-[740px] overflow-hidden">
+
+          {/* All photos stacked — CSS opacity crossfade */}
+          {AMENITIES.map(({ photo, title }, i) => (
+            <img
+              key={title}
+              src={photo}
+              alt={title}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out"
+              style={{ opacity: i === activeIdx ? 1 : 0 }}
+            />
+          ))}
+
+          {/* Atmospheric overlays */}
+          <div className="absolute inset-0 bg-gradient-to-t from-aura-black/80 via-aura-black/15 to-aura-black/5" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-aura-dark/40" />
+
+          {/* Caption — bottom-left, re-animates on change */}
+          <div className="absolute bottom-0 left-0 right-0 p-7 sm:p-10">
+            <div key={activeIdx} className="animate-fade-in">
+              <div className="flex items-center gap-3 mb-2.5">
+                <GoldLine />
+                <span className="text-[9px] tracking-[0.4em] uppercase text-gold">
+                  {active.title}
+                </span>
+              </div>
+              <p className="text-white/70 text-sm leading-relaxed max-w-xs">
+                {active.desc}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right: Interactive list ──────────────────────────── */}
+        <div className="flex flex-col justify-center px-6 sm:px-10 lg:px-14 xl:px-16 py-12 sm:py-16 lg:py-20">
+
+          <FadeIn>
             <SectionTag number={3}>Lifestyle</SectionTag>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-white font-light">
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-[56px] text-white font-light mb-8 sm:mb-10 lg:mb-12">
               Curated<br />
               <em className="text-gold">Amenities</em>
             </h2>
-          </div>
-          <p className="lg:max-w-xs text-white/65 text-sm leading-relaxed">
-            Every detail at Aura Residences is designed to elevate your daily
-            experience beyond the ordinary.
-          </p>
-        </FadeIn>
+          </FadeIn>
 
-        {/* Grid — 2 cols mobile, 4 desktop */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/5">
-          {AMENITIES.map(({ icon: Icon, title, desc }, i) => (
-            <FadeIn key={title} delay={i * 75}>
-              <div className="group bg-aura-dark hover:bg-aura-charcoal p-5 sm:p-8 h-full transition-colors duration-300 cursor-default">
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-sm border border-white/8 group-hover:border-gold/35 flex items-center justify-center mb-4 sm:mb-6 transition-colors duration-300">
-                  <Icon size={15} className="text-white/25 group-hover:text-gold transition-colors duration-300 sm:hidden" />
-                  <Icon size={18} className="text-white/25 group-hover:text-gold transition-colors duration-300 hidden sm:block" />
-                </div>
-                <h3 className="text-white text-xs sm:text-sm font-medium tracking-wide mb-1.5 sm:mb-2">{title}</h3>
-                <p className="text-white/60 text-[11px] sm:text-xs leading-relaxed">{desc}</p>
-              </div>
-            </FadeIn>
-          ))}
+          <div>
+            {AMENITIES.map(({ icon: Icon, title }, i) => (
+              <button
+                key={title}
+                onMouseEnter={() => setActiveIdx(i)}
+                onClick={() => setActiveIdx(i)}
+                className={`w-full flex items-center gap-4 py-4 sm:py-[18px] border-b text-left transition-all duration-200 ${
+                  i === activeIdx ? 'border-white/12' : 'border-white/6 hover:border-white/10'
+                }`}
+              >
+                {/* Active bar */}
+                <div
+                  className="flex-none w-[2px] rounded-full transition-all duration-300"
+                  style={{
+                    height: i === activeIdx ? 26 : 0,
+                    background: i === activeIdx ? '#C4A265' : 'transparent',
+                  }}
+                />
+
+                {/* Icon */}
+                <Icon
+                  size={16}
+                  className={`flex-none transition-colors duration-300 ${
+                    i === activeIdx ? 'text-gold' : 'text-white/20 group-hover:text-white/35'
+                  }`}
+                />
+
+                {/* Title */}
+                <span
+                  className={`font-serif flex-1 leading-none transition-all duration-300 ${
+                    i === activeIdx
+                      ? 'text-white text-xl sm:text-2xl'
+                      : 'text-white/30 text-lg sm:text-xl hover:text-white/50'
+                  }`}
+                >
+                  {title}
+                </span>
+
+                {/* Arrow */}
+                <ChevronRight
+                  size={13}
+                  className={`flex-none transition-all duration-300 ${
+                    i === activeIdx
+                      ? 'text-gold opacity-100 translate-x-0'
+                      : 'opacity-0 -translate-x-1'
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
         </div>
+
       </div>
     </section>
   )

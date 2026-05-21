@@ -441,7 +441,7 @@ function Hero({ onExplore, onSchedule }) {
         style={{ backgroundImage: "url('https://images.unsplash.com/photo-1598200816350-41038d5b7be4?w=2070&q=80')" }}
       />
       <div className="absolute inset-0 bg-aura-black/68" />
-      <div className="absolute inset-0 bg-gradient-to-r from-aura-black/92 via-aura-black/55 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-aura-black via-aura-black/80 via-[48%] to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-aura-black via-transparent to-aura-black/50" />
 
       {/* Content */}
@@ -462,30 +462,28 @@ function Hero({ onExplore, onSchedule }) {
           meets Nairobi's most prestigious address.
         </p>
 
-        {/* Stats — glass card container for readability */}
-        <div className="mt-8 mb-3 sm:mt-10 sm:mb-3 max-w-md">
-          <div className="grid grid-cols-3 divide-x divide-white/15 bg-aura-black/55 backdrop-blur-sm border border-white/12">
-            {[
-              ['42',      'Residences'],
-              ['3',       'Penthouse\nFloors'],
-              ['KSh 14M', 'Starting\nPrice'],
-            ].map(([val, lbl]) => (
-              <div key={lbl} className="px-3 sm:px-6 py-4 sm:py-5">
-                <div className="font-serif text-2xl sm:text-3xl text-gold leading-none">{val}</div>
-                <div className="text-[10px] sm:text-[11px] tracking-[0.1em] sm:tracking-[0.15em] uppercase text-white/80 mt-2 leading-tight whitespace-pre-line">{lbl}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Scarcity bar */}
-          <div className="mt-3 flex items-center gap-3">
-            <div className="relative h-[3px] rounded-full bg-white/10 w-28">
-              <div className="absolute inset-y-0 left-0 rounded-full bg-gold/75" style={{ width: '33%' }} />
+        {/* Stats — clean inline with left-border accents */}
+        <div className="mt-8 sm:mt-10 flex items-start gap-0" style={{ textShadow: '0 1px 8px rgba(0,0,0,1), 0 2px 20px rgba(0,0,0,0.9)' }}>
+          {[
+            ['42',      'Residences'],
+            ['3',       'Penthouse Floors'],
+            ['KSh 14M', 'Starting Price'],
+          ].map(([val, lbl], i) => (
+            <div key={lbl} className={`pr-6 sm:pr-10 ${i > 0 ? 'pl-6 sm:pl-10 border-l border-white/15' : ''}`}>
+              <div className="font-serif text-3xl sm:text-4xl text-gold leading-none">{val}</div>
+              <div className="text-[11px] tracking-[0.15em] uppercase text-white/70 mt-2 leading-none">{lbl}</div>
             </div>
-            <span className="text-[9px] tracking-[0.12em] uppercase text-white/45 whitespace-nowrap">
-              14 of 42 residences remaining
-            </span>
+          ))}
+        </div>
+
+        {/* Scarcity indicator */}
+        <div className="mt-5 flex items-center gap-3">
+          <div className="relative h-[2px] rounded-full bg-white/10 w-24">
+            <div className="absolute inset-y-0 left-0 rounded-full bg-gold/60" style={{ width: '33%' }} />
           </div>
+          <span className="text-[9px] tracking-[0.12em] uppercase text-white/35 whitespace-nowrap">
+            14 of 42 residences remaining
+          </span>
         </div>
 
         {/* CTAs */}

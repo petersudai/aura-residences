@@ -63,6 +63,7 @@ const PROPERTIES = [
 
 const _POOL   = 'https://images.unsplash.com/photo-1774281267183-93e0632b50d1?w=1400&q=85'
 const _LOUNGE = 'https://images.unsplash.com/photo-1639563978014-0313208c2f82?w=1400&q=85'
+const _CONC   = 'https://images.unsplash.com/photo-1776361984994-089a9df800f6?w=1400&q=85'
 const _GYM    = 'https://images.unsplash.com/photo-1630703178161-1e2f9beddbf8?w=1400&q=85'
 const _PARK   = 'https://images.unsplash.com/photo-1607284994847-7a9cfe7f1df2?w=1400&q=85'
 const _SPA    = 'https://images.unsplash.com/photo-1772616748530-7cd73053f326?w=1400&q=85'
@@ -72,7 +73,7 @@ const AMENITIES = [
   { icon: Waves,     photo: _POOL,   title: 'Infinity Edge Pool',  desc: 'Sky-level pool overlooking the full Nairobi skyline, open exclusively to residents' },
   { icon: Building2, photo: _LOUNGE, title: 'Rooftop Lounge',      desc: 'Residents-only terrace bar and private event space, perched above the city' },
   { icon: Dumbbell,  photo: _GYM,    title: 'Performance Gym',     desc: 'Technogym-equipped fitness studio with personal training available on request' },
-  { icon: Clock,     photo: _LOUNGE, title: '24/7 Concierge',      desc: 'White-glove resident services around the clock — from reservations to deliveries' },
+  { icon: Clock,     photo: _CONC,   title: '24/7 Concierge',      desc: 'White-glove resident services around the clock — from reservations to deliveries' },
   { icon: Car,       photo: _PARK,   title: 'Secure Parking',      desc: 'Biometric-access basement with dedicated EV charging bays per residence' },
   { icon: Shield,    photo: _SEC,    title: 'Smart Security',      desc: 'Full-perimeter CCTV, facial recognition entry and rapid panic-response systems' },
   { icon: Sparkles,  photo: _SPA,    title: 'Wellness Spa',        desc: 'In-house sauna, steam room and private treatment suites for exclusive resident use' },

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import {
-  Waves, Dumbbell, Clock, Car, Wifi, Shield, Sparkles,
+  Waves, Dumbbell, Clock, Car, Shield, Sparkles,
   Building2, ChevronRight, ChevronLeft, ArrowDown,
   MapPin, Phone, Mail, Check, X, Menu, Lock,
 } from 'lucide-react'
@@ -482,7 +482,7 @@ function Hero({ onExplore, onSchedule }) {
             <div className="relative h-[3px] rounded-full bg-white/10 w-28">
               <div className="absolute inset-y-0 left-0 rounded-full bg-gold/75" style={{ width: '33%' }} />
             </div>
-            <span className="text-[9px] tracking-[0.2em] uppercase text-white/45">
+            <span className="text-[9px] tracking-[0.12em] uppercase text-white/45 whitespace-nowrap">
               14 of 42 residences remaining
             </span>
           </div>
@@ -714,7 +714,7 @@ function AmenitiesGrid() {
                 key={title}
                 onMouseEnter={() => setActiveIdx(i)}
                 onClick={() => setActiveIdx(i)}
-                className={`w-full flex items-center gap-4 py-4 sm:py-[18px] border-b text-left transition-all duration-200 ${
+                className={`group w-full flex items-center gap-4 py-4 sm:py-[18px] border-b text-left transition-all duration-200 active:opacity-70 ${
                   i === activeIdx ? 'border-white/12' : 'border-white/6 hover:border-white/10'
                 }`}
               >
@@ -731,7 +731,7 @@ function AmenitiesGrid() {
                 <Icon
                   size={16}
                   className={`flex-none transition-colors duration-300 ${
-                    i === activeIdx ? 'text-gold' : 'text-white/20 group-hover:text-white/35'
+                    i === activeIdx ? 'text-gold' : 'text-white/20 group-hover:text-white/40'
                   }`}
                 />
 
@@ -740,7 +740,7 @@ function AmenitiesGrid() {
                   className={`font-serif flex-1 leading-none transition-all duration-300 ${
                     i === activeIdx
                       ? 'text-white text-xl sm:text-2xl'
-                      : 'text-white/30 text-lg sm:text-xl hover:text-white/50'
+                      : 'text-white/30 text-lg sm:text-xl group-hover:text-white/55'
                   }`}
                 >
                   {title}
@@ -1008,13 +1008,15 @@ function ViewingScheduler({ onSuccess }) {
             <p className="text-[9px] tracking-[0.35em] uppercase text-white/55 mb-4">
               01 — Select Residence
             </p>
-            <div className="grid sm:grid-cols-3 gap-3">
-              {PROPERTIES.map(p => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {PROPERTIES.map((p, i) => (
                 <button
                   type="button"
                   key={p.id}
                   onClick={() => { setUnitType(p.id); clearError('unitType') }}
-                  className={`p-4 border text-left transition-all duration-200 ${
+                  className={`p-4 border text-left transition-all duration-200 active:scale-[0.98] ${
+                    i === 2 ? 'col-span-2 sm:col-span-1' : ''
+                  } ${
                     unitType === p.id
                       ? 'border-gold bg-gold/8'
                       : 'border-white/8 hover:border-white/25'

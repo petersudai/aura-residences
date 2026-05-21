@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import {
   Waves, Dumbbell, Clock, Car, Wifi, Shield, Sparkles,
   Building2, ChevronRight, ChevronLeft, ArrowDown,
-  MapPin, Phone, Mail, Check, X, Menu,
+  MapPin, Phone, Mail, Check, X, Menu, Lock,
 } from 'lucide-react'
 
 // ─── Static data ─────────────────────────────────────────────────────────────
@@ -49,7 +49,6 @@ const PROPERTIES = [
     size: '380 sqm',
     beds: 4,
     baths: 5,
-    // white sofa + panoramic city view — high-floor apartment interior
     image: 'https://images.unsplash.com/photo-1629236714859-3a1ec2d8f6c3?w=900&q=85',
     features: [
       '360° panoramic views of Nairobi skyline',
@@ -63,23 +62,23 @@ const PROPERTIES = [
 ]
 
 const AMENITIES = [
-  { icon: Waves,     title: 'Infinity Edge Pool',   desc: 'Sky-level pool overlooking the Nairobi skyline' },
-  { icon: Building2, title: 'Rooftop Lounge',        desc: 'Exclusive residents-only terrace bar & event space' },
-  { icon: Dumbbell,  title: 'Performance Gym',       desc: 'Technogym-equipped private fitness studio' },
-  { icon: Clock,     title: '24/7 Concierge',        desc: 'White-glove resident services around the clock' },
-  { icon: Car,       title: 'Secure Parking',        desc: 'Biometric basement with dedicated EV charging bays' },
-  { icon: Shield,    title: 'Smart Security',        desc: 'CCTV, facial recognition & panic-response systems' },
-  { icon: Wifi,      title: '1 Gbps Fibre',          desc: 'Dedicated high-speed fibre per unit, no contention' },
-  { icon: Sparkles,  title: 'Wellness Spa',          desc: 'In-house sauna, steam & private treatment rooms' },
+  { icon: Waves,     title: 'Infinity Edge Pool',  desc: 'Sky-level pool overlooking the Nairobi skyline' },
+  { icon: Building2, title: 'Rooftop Lounge',       desc: 'Exclusive residents-only terrace bar & event space' },
+  { icon: Dumbbell,  title: 'Performance Gym',      desc: 'Technogym-equipped private fitness studio' },
+  { icon: Clock,     title: '24/7 Concierge',       desc: 'White-glove resident services around the clock' },
+  { icon: Car,       title: 'Secure Parking',       desc: 'Biometric basement with dedicated EV charging bays' },
+  { icon: Shield,    title: 'Smart Security',       desc: 'CCTV, facial recognition & panic-response systems' },
+  { icon: Wifi,      title: '1 Gbps Fibre',         desc: 'Dedicated high-speed fibre per unit, no contention' },
+  { icon: Sparkles,  title: 'Wellness Spa',         desc: 'In-house sauna, steam & private treatment rooms' },
 ]
 
 const GALLERY = [
-  'https://images.unsplash.com/photo-1757924461488-ef9ad0670978?w=700&q=85', // living room — large windows
-  'https://images.unsplash.com/photo-1751290741340-85c4bdcc8d24?w=700&q=85', // living room — soft lighting
-  'https://images.unsplash.com/photo-1715985160020-d8cd6fdc8ba9?w=700&q=85', // kitchen — island + stools
-  'https://images.unsplash.com/photo-1695002817411-203c7f19dfa3?w=700&q=85', // bathroom — tub & mirror
-  'https://images.unsplash.com/photo-1758193431353-87812fbff5cd?w=700&q=85', // rooftop patio — city view
-  'https://images.unsplash.com/photo-1776363116182-51694a04a1d5?w=700&q=85', // balcony — hanging chair
+  'https://images.unsplash.com/photo-1757924461488-ef9ad0670978?w=700&q=85',
+  'https://images.unsplash.com/photo-1751290741340-85c4bdcc8d24?w=700&q=85',
+  'https://images.unsplash.com/photo-1715985160020-d8cd6fdc8ba9?w=700&q=85',
+  'https://images.unsplash.com/photo-1695002817411-203c7f19dfa3?w=700&q=85',
+  'https://images.unsplash.com/photo-1758193431353-87812fbff5cd?w=700&q=85',
+  'https://images.unsplash.com/photo-1776363116182-51694a04a1d5?w=700&q=85',
 ]
 
 const LOCATIONS = [
@@ -109,7 +108,7 @@ function formatDate(d) {
   return `${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`
 }
 
-// ─── useInView hook (scroll-triggered animations) ─────────────────────────────
+// ─── useInView hook ───────────────────────────────────────────────────────────
 
 function useInView(threshold = 0.12) {
   const ref = useRef(null)
@@ -142,6 +141,92 @@ function FadeIn({ children, delay = 0, className = '' }) {
   )
 }
 
+// ─── ScrollProgress ───────────────────────────────────────────────────────────
+
+function ScrollProgress() {
+  const [progress, setProgress] = useState(0)
+  useEffect(() => {
+    const handler = () => {
+      const scrolled = window.scrollY
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      setProgress(maxScroll > 0 ? (scrolled / maxScroll) * 100 : 0)
+    }
+    window.addEventListener('scroll', handler, { passive: true })
+    return () => window.removeEventListener('scroll', handler)
+  }, [])
+  return (
+    <div className="fixed top-0 left-0 right-0 z-[200] h-[2px] bg-white/[0.06]">
+      <div
+        className="h-full bg-gradient-to-r from-gold/70 to-gold"
+        style={{ width: `${progress}%`, transition: 'none' }}
+      />
+    </div>
+  )
+}
+
+// ─── NoiseOverlay ─────────────────────────────────────────────────────────────
+
+function NoiseOverlay() {
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        zIndex: 0,
+        opacity: 0.055,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+        backgroundSize: '200px 200px',
+      }}
+    />
+  )
+}
+
+// ─── SkewDivider ─────────────────────────────────────────────────────────────
+// fromLight=true → cream above, dark below (cream→dark transition)
+// fromLight=false → dark above, cream below (dark→cream transition)
+
+function SkewDivider({ fromLight = true }) {
+  const fromColor = fromLight ? '#F5F0E8' : '#111111'
+  const toColor   = fromLight ? '#111111' : '#F5F0E8'
+  return (
+    <div style={{
+      height: 52,
+      background: toColor,
+      overflow: 'hidden',
+      display: 'block',
+      lineHeight: 0,
+      fontSize: 0,
+    }}>
+      <div style={{
+        height: '100%',
+        background: fromColor,
+        clipPath: 'polygon(0 0, 100% 0, 100% 20%, 0 80%)',
+      }} />
+    </div>
+  )
+}
+
+// ─── GoldLine & SectionTag ────────────────────────────────────────────────────
+
+function GoldLine({ center = false }) {
+  return <div className={`w-8 h-px bg-gold${center ? ' mx-auto' : ''}`} />
+}
+
+function SectionTag({ children, number }) {
+  return (
+    <div className="flex items-center gap-3 mb-4">
+      {number !== undefined && (
+        <span className="font-serif italic text-[11px] text-gold/40 tracking-[0.1em]">
+          {String(number).padStart(2, '0')}
+        </span>
+      )}
+      <GoldLine />
+      <span className="text-[10px] tracking-[0.4em] uppercase text-gold">{children}</span>
+    </div>
+  )
+}
+
 // ─── WhatsApp CTA ─────────────────────────────────────────────────────────────
 
 function WhatsAppCTA() {
@@ -153,7 +238,7 @@ function WhatsAppCTA() {
       aria-label="Chat on WhatsApp"
       className="fixed bottom-6 left-6 z-[90] group flex items-center gap-3"
     >
-      <div className="w-14 h-14 rounded-full bg-[#25D366] shadow-xl shadow-[#25D366]/25 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+      <div className="w-14 h-14 rounded-full bg-[#25D366] shadow-xl shadow-[#25D366]/30 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
         <svg viewBox="0 0 24 24" fill="white" width="26" height="26">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
         </svg>
@@ -188,7 +273,6 @@ function Lightbox({ images, index, onClose }) {
       className="fixed inset-0 z-[150] bg-aura-black/95 flex items-center justify-center animate-fade-in"
       onClick={onClose}
     >
-      {/* Close */}
       <button
         onClick={onClose}
         className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center border border-white/15 hover:border-white/40 text-white/50 hover:text-white transition-all duration-200 z-10"
@@ -196,13 +280,9 @@ function Lightbox({ images, index, onClose }) {
       >
         <X size={17} />
       </button>
-
-      {/* Counter */}
       <span className="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] uppercase text-white/35 z-10 pointer-events-none">
         {current + 1} / {images.length}
       </span>
-
-      {/* Prev */}
       <button
         onClick={prev}
         disabled={current === 0}
@@ -211,8 +291,6 @@ function Lightbox({ images, index, onClose }) {
       >
         <ChevronLeft size={22} />
       </button>
-
-      {/* Full-res image */}
       <img
         key={current}
         src={images[current].replace('w=700', 'w=1400')}
@@ -220,8 +298,6 @@ function Lightbox({ images, index, onClose }) {
         className="max-h-[80vh] max-w-[92vw] sm:max-w-[78vw] object-contain shadow-2xl animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       />
-
-      {/* Next */}
       <button
         onClick={next}
         disabled={current === images.length - 1}
@@ -230,8 +306,6 @@ function Lightbox({ images, index, onClose }) {
       >
         <ChevronRight size={22} />
       </button>
-
-      {/* Dot nav */}
       <div className="absolute bottom-7 flex items-center gap-2 z-10">
         {images.map((_, i) => (
           <button
@@ -244,21 +318,6 @@ function Lightbox({ images, index, onClose }) {
           />
         ))}
       </div>
-    </div>
-  )
-}
-
-// ─── GoldLine ─────────────────────────────────────────────────────────────────
-
-function GoldLine() {
-  return <div className="w-8 h-px bg-gold" />
-}
-
-function SectionTag({ children }) {
-  return (
-    <div className="flex items-center gap-3 mb-4">
-      <GoldLine />
-      <span className="text-[10px] tracking-[0.4em] uppercase text-gold">{children}</span>
     </div>
   )
 }
@@ -314,14 +373,14 @@ function Navbar({ onBookClick }) {
           ))}
         </div>
 
-        {/* Desktop CTA + mobile hamburger */}
+        {/* Desktop CTA + hamburger */}
         <div className="flex items-center gap-4">
           <button
             onClick={onBookClick}
             className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-gold hover:bg-gold-light text-aura-black text-[10px] tracking-[0.22em] uppercase font-semibold transition-all duration-300 rounded-sm"
           >
-            Book Viewing
-            <ChevronRight size={11} />
+            <Lock size={9} />
+            Private Viewing
           </button>
           <button
             onClick={() => setMobileOpen(o => !o)}
@@ -352,9 +411,10 @@ function Navbar({ onBookClick }) {
           ))}
           <button
             onClick={() => { onBookClick(); setMobileOpen(false) }}
-            className="mt-4 w-full py-3.5 bg-gold hover:bg-gold-light text-aura-black text-[10px] tracking-[0.25em] uppercase font-semibold transition-all duration-300 rounded-sm"
+            className="mt-4 w-full py-3.5 bg-gold hover:bg-gold-light text-aura-black text-[10px] tracking-[0.25em] uppercase font-semibold transition-all duration-300 rounded-sm flex items-center justify-center gap-2"
           >
-            Book Viewing
+            <Lock size={9} />
+            Private Viewing
           </button>
         </div>
       </div>
@@ -368,19 +428,13 @@ function Hero({ onExplore, onSchedule }) {
   return (
     <section id="hero" className="relative min-h-screen flex flex-col justify-center overflow-hidden">
 
-      {/* Background — modern apartment tower with glass balconies */}
+      {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center scale-105"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1598200816350-41038d5b7be4?w=2070&q=80')",
-        }}
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1598200816350-41038d5b7be4?w=2070&q=80')" }}
       />
-      {/* Layer 1 — strong base scrim for daytime building photo */}
       <div className="absolute inset-0 bg-aura-black/68" />
-      {/* Layer 2 — directional: left text area pushed to near-black */}
       <div className="absolute inset-0 bg-gradient-to-r from-aura-black/92 via-aura-black/55 to-transparent" />
-      {/* Layer 3 — vertical: ground the bottom, soften the sky */}
       <div className="absolute inset-0 bg-gradient-to-t from-aura-black via-transparent to-aura-black/50" />
 
       {/* Content */}
@@ -388,7 +442,7 @@ function Hero({ onExplore, onSchedule }) {
         className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 pt-24 pb-14 sm:pt-36 sm:pb-28 w-full"
         style={{ textShadow: '0 2px 24px rgba(0,0,0,0.85)' }}
       >
-        <SectionTag>Westlands · Nairobi</SectionTag>
+        <SectionTag number={1}>Westlands · Nairobi</SectionTag>
 
         <h1 className="font-serif text-4xl sm:text-7xl lg:text-[88px] font-light text-white leading-[1.05] max-w-4xl mt-2">
           Elevated Living<br />
@@ -401,20 +455,34 @@ function Hero({ onExplore, onSchedule }) {
           meets Nairobi's most prestigious address.
         </p>
 
-        {/* Stats — grid forces all three onto one row */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-10 mt-8 mb-10 sm:mt-12 sm:mb-14">
-          {[['42', 'Residences'], ['3', 'Penthouse Floors'], ['KSh 14M', 'Starting Price']].map(
-            ([val, lbl]) => (
-              <div key={lbl}>
-                <div className="font-serif text-2xl sm:text-3xl text-gold">{val}</div>
-                <div className="text-[8px] sm:text-[9px] tracking-[0.18em] sm:tracking-[0.25em] uppercase text-white/60 mt-1 leading-tight">{lbl}</div>
+        {/* Stats — glass card container for readability */}
+        <div className="mt-8 mb-3 sm:mt-10 sm:mb-3 max-w-md">
+          <div className="grid grid-cols-3 divide-x divide-white/15 bg-aura-black/55 backdrop-blur-sm border border-white/12">
+            {[
+              ['42',      'Residences'],
+              ['3',       'Penthouse\nFloors'],
+              ['KSh 14M', 'Starting\nPrice'],
+            ].map(([val, lbl]) => (
+              <div key={lbl} className="px-3 sm:px-6 py-4 sm:py-5">
+                <div className="font-serif text-2xl sm:text-3xl text-gold leading-none">{val}</div>
+                <div className="text-[10px] sm:text-[11px] tracking-[0.1em] sm:tracking-[0.15em] uppercase text-white/80 mt-2 leading-tight whitespace-pre-line">{lbl}</div>
               </div>
-            )
-          )}
+            ))}
+          </div>
+
+          {/* Scarcity bar */}
+          <div className="mt-3 flex items-center gap-3">
+            <div className="relative h-[3px] rounded-full bg-white/10 w-28">
+              <div className="absolute inset-y-0 left-0 rounded-full bg-gold/75" style={{ width: '33%' }} />
+            </div>
+            <span className="text-[9px] tracking-[0.2em] uppercase text-white/45">
+              14 of 42 residences remaining
+            </span>
+          </div>
         </div>
 
         {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 mt-8 sm:mt-10">
           <button
             onClick={onExplore}
             className="group flex items-center justify-center gap-3 px-8 py-4 bg-gold hover:bg-gold-light text-aura-black text-[10px] tracking-[0.28em] uppercase font-semibold transition-all duration-300"
@@ -453,11 +521,25 @@ function PropertyExplorer() {
 
         {/* Header */}
         <FadeIn className="mb-8 sm:mb-14">
-          <SectionTag>Our Residences</SectionTag>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-aura-black font-light">
-            Find Your Perfect<br />
-            <em>Aura Residence</em>
-          </h2>
+          <SectionTag number={2}>Our Residences</SectionTag>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-aura-black font-light">
+              Find Your Perfect<br />
+              <em>Aura Residence</em>
+            </h2>
+            {/* Scarcity + payment callout */}
+            <div className="sm:text-right space-y-1 sm:mb-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gold/12 border border-gold/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-gold flex-none" />
+                <span className="text-[9px] tracking-[0.18em] uppercase text-aura-black/70">
+                  14 of 42 remaining
+                </span>
+              </div>
+              <p className="text-[10px] text-aura-black/50 tracking-wide">
+                80/20 off-plan · Bank financing supported
+              </p>
+            </div>
+          </div>
         </FadeIn>
 
         {/* Tabs */}
@@ -477,7 +559,7 @@ function PropertyExplorer() {
           ))}
         </div>
 
-        {/* Content — re-mounts on tab change to trigger fade animation */}
+        {/* Content */}
         <div key={activeId} className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-start animate-fade-in">
 
           {/* Image */}
@@ -516,8 +598,16 @@ function PropertyExplorer() {
               ))}
             </div>
 
+            {/* Payment callout */}
+            <div className="mt-5 flex items-start gap-3 px-4 py-3 bg-aura-black/[0.03] border-l-2 border-gold/40">
+              <span className="text-aura-black/65 text-xs leading-relaxed">
+                <strong className="text-aura-black font-medium">80/20 off-plan available</strong>
+                {' '}· Flexible milestone payments · Standard bank financing supported
+              </span>
+            </div>
+
             {/* Feature list */}
-            <ul className="mt-8 space-y-4 mb-10">
+            <ul className="mt-6 space-y-3.5 mb-8">
               {active.features.map(f => (
                 <li key={f} className="flex items-start gap-3.5 text-aura-black/80 text-sm leading-relaxed">
                   <span className="flex-none mt-0.5 w-5 h-5 rounded-full bg-gold/15 flex items-center justify-center">
@@ -542,7 +632,8 @@ function PropertyExplorer() {
               href="#scheduler"
               className="group flex items-center justify-center gap-3 w-full sm:w-auto sm:self-start px-8 py-4 bg-aura-black hover:bg-aura-charcoal text-white text-[10px] tracking-[0.22em] uppercase font-medium transition-all duration-300"
             >
-              Request Information
+              <Lock size={10} className="opacity-60" />
+              Request Private Viewing
               <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform duration-200" />
             </a>
           </div>
@@ -556,13 +647,13 @@ function PropertyExplorer() {
 
 function AmenitiesGrid() {
   return (
-    <section id="amenities" className="bg-aura-dark py-14 sm:py-24 lg:py-36">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6">
+    <section id="amenities" className="relative bg-aura-dark py-14 sm:py-24 lg:py-36">
+      <NoiseOverlay />
+      <div className="relative z-[1] max-w-7xl mx-auto px-5 sm:px-6">
 
-        {/* Header */}
         <FadeIn className="mb-10 sm:mb-16 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 sm:gap-6">
           <div>
-            <SectionTag>Lifestyle</SectionTag>
+            <SectionTag number={3}>Lifestyle</SectionTag>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-white font-light">
               Curated<br />
               <em className="text-gold">Amenities</em>
@@ -574,7 +665,7 @@ function AmenitiesGrid() {
           </p>
         </FadeIn>
 
-        {/* Grid — 2 cols on mobile, 4 on desktop */}
+        {/* Grid — 2 cols mobile, 4 desktop */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/5">
           {AMENITIES.map(({ icon: Icon, title, desc }, i) => (
             <FadeIn key={title} delay={i * 75}>
@@ -598,14 +689,16 @@ function AmenitiesGrid() {
 
 function GalleryStrip({ onImageClick }) {
   return (
-    <section className="bg-aura-black py-14 sm:py-24">
-      <FadeIn className="max-w-7xl mx-auto px-5 sm:px-6 mb-8 sm:mb-10">
-        <SectionTag>Gallery</SectionTag>
+    <section className="relative bg-aura-black py-14 sm:py-24">
+      <NoiseOverlay />
+
+      <FadeIn className="relative z-[1] max-w-7xl mx-auto px-5 sm:px-6 mb-8 sm:mb-10">
+        <SectionTag number={4}>Gallery</SectionTag>
         <h2 className="font-serif text-3xl sm:text-4xl text-white font-light">A Glimpse Inside</h2>
         <p className="text-white/45 text-xs mt-2 tracking-wide">Tap any image to view full screen</p>
       </FadeIn>
 
-      <div className="flex gap-2 sm:gap-3 overflow-x-auto no-scrollbar px-5 sm:px-6">
+      <div className="relative z-[1] flex gap-2 sm:gap-3 overflow-x-auto no-scrollbar px-5 sm:px-6">
         {GALLERY.map((src, i) => (
           <FadeIn key={i} delay={i * 60} className="flex-none">
             <div
@@ -618,7 +711,6 @@ function GalleryStrip({ onImageClick }) {
                 loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              {/* hover overlay hint */}
               <div className="absolute inset-0 bg-aura-black/0 group-hover:bg-aura-black/20 transition-colors duration-300 flex items-center justify-center">
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px] tracking-[0.35em] uppercase text-white border border-white/40 px-3 py-1.5">
                   View
@@ -632,7 +724,59 @@ function GalleryStrip({ onImageClick }) {
   )
 }
 
-// ─── Location ─────────────────────────────────────────────────────────────────
+// ─── Press Strip ─────────────────────────────────────────────────────────────
+
+function PressStrip() {
+  const mentions = [
+    { pub: 'Business Daily',   note: 'Best New Development 2025' },
+    { pub: 'The Standard',     note: 'Westlands Rising Star' },
+    { pub: 'Forbes Africa',    note: 'Top 10 Luxury Builds' },
+    { pub: 'Architecture KE',  note: 'Design Excellence Award' },
+  ]
+  return (
+    <section className="relative bg-aura-black border-y border-white/5 py-10 sm:py-12">
+      <NoiseOverlay />
+      <FadeIn className="relative z-[1] max-w-7xl mx-auto px-5 sm:px-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-14">
+          <div className="flex-none">
+            <div className="text-[9px] tracking-[0.45em] uppercase text-white/25 mb-0.5">As Seen In</div>
+            <GoldLine />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 w-full">
+            {mentions.map(({ pub, note }) => (
+              <div key={pub} className="opacity-25 hover:opacity-60 transition-opacity duration-300 cursor-default">
+                <div className="font-serif text-base sm:text-lg text-white tracking-wide leading-tight">{pub}</div>
+                <div className="text-[9px] tracking-[0.18em] uppercase text-gold/80 mt-1">{note}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  )
+}
+
+// ─── Pull Quote ───────────────────────────────────────────────────────────────
+
+function PullQuote() {
+  return (
+    <section className="bg-aura-cream py-20 sm:py-32">
+      <FadeIn className="max-w-4xl mx-auto px-6 text-center">
+        <GoldLine center />
+        <blockquote className="font-serif text-3xl sm:text-4xl lg:text-5xl text-aura-black font-light italic leading-[1.25] mt-10 mb-10">
+          "Forty-two residences.<br className="hidden sm:block" />
+          One address."
+        </blockquote>
+        <GoldLine center />
+        <p className="text-[9px] tracking-[0.4em] uppercase text-aura-black/35 mt-8">
+          Aura Residences · Westlands, Nairobi
+        </p>
+      </FadeIn>
+    </section>
+  )
+}
+
+// ─── Location Section ─────────────────────────────────────────────────────────
 
 function LocationSection() {
   return (
@@ -641,7 +785,7 @@ function LocationSection() {
 
         {/* Text */}
         <FadeIn>
-          <SectionTag>Location</SectionTag>
+          <SectionTag number={5}>Location</SectionTag>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-aura-black font-light mb-5 sm:mb-6">
             At the Pulse of<br />
             <em>Westlands</em>
@@ -669,7 +813,7 @@ function LocationSection() {
           </div>
         </FadeIn>
 
-        {/* Map / cityscape */}
+        {/* Cityscape */}
         <FadeIn delay={150} className="relative h-64 sm:h-96 lg:h-[500px] overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1676831238417-f104b770595d?w=900&q=80"
@@ -678,7 +822,6 @@ function LocationSection() {
             className="w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-aura-black/50 via-transparent to-transparent" />
-          {/* Pin overlay */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="flex flex-col items-center">
               <div className="w-12 h-12 rounded-full bg-gold shadow-2xl shadow-gold/40 flex items-center justify-center">
@@ -701,13 +844,13 @@ function LocationSection() {
 
 function ViewingScheduler({ onSuccess }) {
   const today  = new Date()
-  const [calYear,       setCalYear]       = useState(today.getFullYear())
-  const [calMonth,      setCalMonth]      = useState(today.getMonth())
-  const [selectedDate,  setSelectedDate]  = useState(null)
-  const [selectedTime,  setSelectedTime]  = useState(null)
-  const [unitType,      setUnitType]      = useState('')
-  const [form,          setForm]          = useState({ name: '', email: '', phone: '' })
-  const [errors,        setErrors]        = useState({})
+  const [calYear,      setCalYear]      = useState(today.getFullYear())
+  const [calMonth,     setCalMonth]     = useState(today.getMonth())
+  const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedTime, setSelectedTime] = useState(null)
+  const [unitType,     setUnitType]     = useState('')
+  const [form,         setForm]         = useState({ name: '', email: '', phone: '' })
+  const [errors,       setErrors]       = useState({})
 
   const totalDays = daysInMonth(calYear, calMonth)
   const startDay  = firstDayOf(calYear, calMonth)
@@ -754,19 +897,23 @@ function ViewingScheduler({ onSuccess }) {
     } text-white placeholder-white/40 px-4 py-3.5 text-sm focus:outline-none focus:border-gold/60 transition-colors duration-200`
 
   return (
-    <section id="scheduler" className="bg-aura-black py-14 sm:py-24 lg:py-36">
-      <div className="max-w-3xl mx-auto px-5 sm:px-6">
+    <section id="scheduler" className="relative bg-aura-black py-14 sm:py-24 lg:py-36">
+      <NoiseOverlay />
+      <div className="relative z-[1] max-w-3xl mx-auto px-5 sm:px-6">
 
         {/* Header */}
         <FadeIn className="text-center mb-10 sm:mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
             <GoldLine />
-            <span className="text-[10px] tracking-[0.4em] uppercase text-gold">Exclusive Access</span>
+            <span className="text-[10px] tracking-[0.4em] uppercase text-gold">
+              <span className="font-serif italic text-gold/40 mr-2 text-[11px]">06</span>
+              Exclusive Access
+            </span>
             <GoldLine />
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-white font-light">
             Schedule Your<br />
-            <em className="text-gold">VIP Viewing</em>
+            <em className="text-gold">Private Viewing</em>
           </h2>
           <p className="text-white/60 mt-5 text-sm max-w-sm mx-auto leading-relaxed">
             Our dedicated sales team will personally guide you through your
@@ -776,7 +923,7 @@ function ViewingScheduler({ onSuccess }) {
 
         <form onSubmit={handleSubmit} className="space-y-10" noValidate>
 
-          {/* Step 1 — Unit type */}
+          {/* Step 1 */}
           <div>
             <p className="text-[9px] tracking-[0.35em] uppercase text-white/55 mb-4">
               01 — Select Residence
@@ -798,9 +945,7 @@ function ViewingScheduler({ onSuccess }) {
                 </button>
               ))}
             </div>
-            {errors.unitType && (
-              <p className="text-red-400/65 text-xs mt-2">{errors.unitType}</p>
-            )}
+            {errors.unitType && <p className="text-red-400/65 text-xs mt-2">{errors.unitType}</p>}
           </div>
 
           {/* Step 2 — Calendar */}
@@ -809,45 +954,22 @@ function ViewingScheduler({ onSuccess }) {
               02 — Select Date
             </p>
             <div className="border border-white/8 p-5 sm:p-7">
-
-              {/* Month navigation */}
               <div className="flex items-center justify-between mb-6">
-                <button
-                  type="button"
-                  onClick={prevMonth}
-                  className="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors"
-                >
+                <button type="button" onClick={prevMonth} className="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors">
                   <ChevronLeft size={17} />
                 </button>
-                <span className="font-serif text-xl text-white">
-                  {MONTHS[calMonth]} {calYear}
-                </span>
-                <button
-                  type="button"
-                  onClick={nextMonth}
-                  className="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors"
-                >
+                <span className="font-serif text-xl text-white">{MONTHS[calMonth]} {calYear}</span>
+                <button type="button" onClick={nextMonth} className="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors">
                   <ChevronRight size={17} />
                 </button>
               </div>
-
-              {/* Day headers */}
               <div className="grid grid-cols-7 mb-1">
                 {DAYS.map(d => (
-                  <div
-                    key={d}
-                    className="text-center text-[9px] tracking-widest uppercase text-white/45 pb-3"
-                  >
-                    {d}
-                  </div>
+                  <div key={d} className="text-center text-[9px] tracking-widest uppercase text-white/45 pb-3">{d}</div>
                 ))}
               </div>
-
-              {/* Day cells */}
               <div className="grid grid-cols-7 gap-0.5">
-                {Array(startDay).fill(null).map((_, i) => (
-                  <div key={`blank-${i}`} />
-                ))}
+                {Array(startDay).fill(null).map((_, i) => <div key={`blank-${i}`} />)}
                 {Array(totalDays).fill(null).map((_, i) => {
                   const day    = i + 1
                   const date   = new Date(calYear, calMonth, day)
@@ -856,7 +978,6 @@ function ViewingScheduler({ onSuccess }) {
                   const isTday = calYear  === today.getFullYear()
                               && calMonth === today.getMonth()
                               && day      === today.getDate()
-
                   return (
                     <button
                       key={day}
@@ -882,18 +1003,11 @@ function ViewingScheduler({ onSuccess }) {
                 })}
               </div>
             </div>
-
-            {selectedDate && (
-              <p className="text-gold/65 text-xs mt-2 tracking-wide">
-                Selected: {formatDate(selectedDate)}
-              </p>
-            )}
-            {errors.date && (
-              <p className="text-red-400/65 text-xs mt-1">{errors.date}</p>
-            )}
+            {selectedDate && <p className="text-gold/65 text-xs mt-2 tracking-wide">Selected: {formatDate(selectedDate)}</p>}
+            {errors.date && <p className="text-red-400/65 text-xs mt-1">{errors.date}</p>}
           </div>
 
-          {/* Step 3 — Time slots */}
+          {/* Step 3 — Time */}
           <div>
             <p className="text-[9px] tracking-[0.35em] uppercase text-white/55 mb-4">
               03 — Choose Time
@@ -914,12 +1028,10 @@ function ViewingScheduler({ onSuccess }) {
                 </button>
               ))}
             </div>
-            {errors.time && (
-              <p className="text-red-400/65 text-xs mt-2">{errors.time}</p>
-            )}
+            {errors.time && <p className="text-red-400/65 text-xs mt-2">{errors.time}</p>}
           </div>
 
-          {/* Step 4 — Contact details */}
+          {/* Step 4 — Details */}
           <div>
             <p className="text-[9px] tracking-[0.35em] uppercase text-white/55 mb-4">
               04 — Your Details
@@ -935,15 +1047,10 @@ function ViewingScheduler({ onSuccess }) {
                     type={type}
                     placeholder={placeholder}
                     value={form[field]}
-                    onChange={e => {
-                      setForm(f => ({ ...f, [field]: e.target.value }))
-                      clearError(field)
-                    }}
+                    onChange={e => { setForm(f => ({ ...f, [field]: e.target.value })); clearError(field) }}
                     className={inputCls(field)}
                   />
-                  {errors[field] && (
-                    <p className="text-red-400/65 text-xs mt-1">{errors[field]}</p>
-                  )}
+                  {errors[field] && <p className="text-red-400/65 text-xs mt-1">{errors[field]}</p>}
                 </div>
               ))}
             </div>
@@ -954,7 +1061,8 @@ function ViewingScheduler({ onSuccess }) {
             type="submit"
             className="group w-full py-5 bg-gold hover:bg-gold-light text-aura-black text-[11px] tracking-[0.3em] uppercase font-semibold transition-all duration-300 flex items-center justify-center gap-3"
           >
-            Confirm VIP Viewing
+            <Lock size={11} className="opacity-60" />
+            Confirm Private Viewing
             <ChevronRight size={13} className="group-hover:translate-x-1 transition-transform duration-200" />
           </button>
 
@@ -985,21 +1093,14 @@ function Toast({ data, onClose }) {
           <div className="flex-1 min-w-0">
             <h4 className="text-white font-medium text-sm mb-1">Viewing Confirmed</h4>
             <p className="text-white/70 text-xs leading-relaxed">
-              Thank you,{' '}
-              <strong className="text-white">{data.name}</strong>. Your VIP
+              Thank you, <strong className="text-white">{data.name}</strong>. Your private
               viewing is scheduled for{' '}
               <strong className="text-gold">{data.date}</strong> at{' '}
               <strong className="text-gold">{data.time}</strong>.
             </p>
-            <p className="text-white/50 text-xs mt-2">
-              Confirmation sent to {data.email}
-            </p>
+            <p className="text-white/50 text-xs mt-2">Confirmation sent to {data.email}</p>
           </div>
-          <button
-            onClick={onClose}
-            className="text-white/50 hover:text-white transition-colors flex-none"
-            aria-label="Dismiss"
-          >
+          <button onClick={onClose} className="text-white/50 hover:text-white transition-colors flex-none" aria-label="Dismiss">
             <X size={15} />
           </button>
         </div>
@@ -1012,16 +1113,18 @@ function Toast({ data, onClose }) {
 
 function Footer() {
   return (
-    <footer className="bg-aura-black border-t border-white/5 py-10 sm:py-16">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6">
+    <footer className="relative bg-aura-black border-t border-white/5 py-10 sm:py-16">
+      <NoiseOverlay />
+      <div className="relative z-[1] max-w-7xl mx-auto px-5 sm:px-6">
         <div className="grid sm:grid-cols-3 gap-8 sm:gap-12 mb-10 sm:mb-14">
 
           {/* Brand */}
           <div>
-            <div className="flex flex-col leading-none mb-6">
+            <div className="flex flex-col leading-none mb-2">
               <span className="font-serif text-3xl font-light tracking-[0.18em] text-gold">AURA</span>
               <span className="text-[8px] tracking-[0.45em] text-white/45 uppercase mt-0.5">RESIDENCES</span>
             </div>
+            <p className="text-[9px] tracking-[0.3em] uppercase text-white/20 mb-5">Est. MMXXV</p>
             <p className="text-white/50 text-xs leading-relaxed max-w-xs">
               Forty-two residences of extraordinary ambition. Westlands, Nairobi.
             </p>
@@ -1032,9 +1135,9 @@ function Footer() {
             <h4 className="text-[9px] tracking-[0.35em] uppercase text-white/50 mb-5">Contact</h4>
             <div className="space-y-3.5">
               {[
-                { Icon: Phone, text: '+254 700 000 000' },
-                { Icon: Mail,  text: 'hello@auraresidences.co.ke' },
-                { Icon: MapPin,text: 'Westlands, Nairobi, Kenya' },
+                { Icon: Phone,  text: '+254 700 000 000' },
+                { Icon: Mail,   text: 'hello@auraresidences.co.ke' },
+                { Icon: MapPin, text: 'Westlands, Nairobi, Kenya' },
               ].map(({ Icon, text }) => (
                 <div key={text} className="flex items-center gap-3 text-white/55 text-xs hover:text-white transition-colors cursor-default">
                   <Icon size={12} className="text-gold/55 flex-none" />
@@ -1070,13 +1173,17 @@ function Footer() {
 
 export default function App() {
   const [toast,    setToast]    = useState(null)
-  const [lightbox, setLightbox] = useState(null)   // null = closed, number = open index
+  const [lightbox, setLightbox] = useState(null)
   const schedulerRef = useRef(null)
 
   const scrollTo = (ref) => ref.current?.scrollIntoView({ behavior: 'smooth' })
 
   return (
     <div className="min-h-screen bg-aura-black font-sans">
+
+      {/* Gold reading progress bar */}
+      <ScrollProgress />
+
       <Navbar onBookClick={() => scrollTo(schedulerRef)} />
 
       <Hero
@@ -1085,9 +1192,22 @@ export default function App() {
       />
 
       <PropertyExplorer />
+
+      {/* Cream → Dark skew transition */}
+      <SkewDivider fromLight={true} />
+
       <AmenitiesGrid />
       <GalleryStrip onImageClick={setLightbox} />
+      <PressStrip />
+
+      {/* Dark → Cream skew transition */}
+      <SkewDivider fromLight={false} />
+
+      <PullQuote />
       <LocationSection />
+
+      {/* Cream → Dark skew transition */}
+      <SkewDivider fromLight={true} />
 
       <div ref={schedulerRef}>
         <ViewingScheduler onSuccess={data => setToast(data)} />
@@ -1095,15 +1215,12 @@ export default function App() {
 
       <Footer />
 
-      {/* Gallery lightbox */}
       {lightbox !== null && (
         <Lightbox images={GALLERY} index={lightbox} onClose={() => setLightbox(null)} />
       )}
 
-      {/* Booking confirmation toast */}
       {toast && <Toast data={toast} onClose={() => setToast(null)} />}
 
-      {/* WhatsApp floating CTA */}
       <WhatsAppCTA />
     </div>
   )

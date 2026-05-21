@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Dark background with very slight rounding -->
+  <rect width="32" height="32" rx="4" fill="#111111"/>
+
+  <!-- Crown / tower mark — 3 vertical bars, bottom-aligned at y=28 -->
+  <!-- Left bar: 13 units tall -->
+  <rect x="4.5" y="15" width="5.5" height="13" rx="0.75" fill="#C4A265"/>
+  <!-- Centre bar: 21 units tall (the tower) -->
+  <rect x="13.25" y="7" width="5.5" height="21" rx="0.75" fill="#C4A265"/>
+  <!-- Right bar: 13 units tall -->
+  <rect x="22" y="15" width="5.5" height="13" rx="0.75" fill="#C4A265"/>
+
+  <!-- Thin base connector — grounds the mark -->
+  <rect x="4.5" y="27.5" width="23" height="1.5" rx="0.5" fill="#C4A265" opacity="0.55"/>
+</svg>
